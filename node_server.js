@@ -25,26 +25,55 @@ app.get('/search/:ticker', (req,res) => {
     console.log("got the request")
     console.log(stockTicker)
 
-    //generate url for the API call to finnhub
-    finnHub_URL = "https://finnhub.io/api/v1/stock/profile2?symbol=" + stockTicker + "&token=c83mf0aad3ift3bmcrr0"
+    //async function for finnhub requests
+    async function handleStockSearch(stockTicker){
+        var first_JSON;
+        var second_JSON;
 
-    //use axios for the HTTP call
-    axios
-        .get(finnHub_URL)
-                .then(result => {
-                    console.log(`statusCode: ${result.status}`)
-                    console.log(result.data)
-                    //send JSON result back to front end
-                    res.send(JSON.stringify(result.data))
-                })
-                .catch(error => {
-                    console.error(error)
-                })
+        //generate url for the API call to finnhub
+        finnHub_URL = "https://finnhub.io/api/v1/stock/profile2?symbol=" + stockTicker + "&token=c83mf0aad3ift3bmcrr0"
+
+        //use axios for the HTTP call for the company JSON
+        await axios
+            .get(finnHub_URL)
+                    .then(result => {
+                        console.log(`statusCode: ${result.status}`)
+                        console.log(result.data)
+                        //send JSON result back to front end
+                        first_JSON = result.data
+                        //res.write(JSON.stringify(result.data) + "\n")
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    })
     
-    //console.log("HTTP REQUEST VALID")
-    //resultJson = response
-    //console.log(response.data)
-    
+        //second call for the stock detail info JSON
+        finnHub_details_URL = "https://finnhub.io/api/v1/quote?symbol=" + stockTicker + "&token=c83mf0aad3ift3bmcrr0"
+        await axios
+            .get(finnHub_details_URL)
+                   .then(result => {
+                        console.log(`statusCode: ${result.status}`)
+                        console.log(result.data)
+                        //send JSON result back to front end
+                        second_JSON = result.data
+                        //res.write(JSON.stringify(result.data) + "\n")
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    })
+        
+        //package both finnhub responses into one JSON
+        responseJSON = {"companyData" : first_JSON, "stockDetails": second_JSON};
+        //res.send(JSON.stringify(responseJSON));
+
+        //send final JSON back to client
+        res.send(responseJSON)
+    }
+
+    handleStockSearch(stockTicker)
+
+    //res.send() is equivalant to res.write() + res.end()
+    //res.end();
 });
 
 //display which port the server is listening on
