@@ -11,11 +11,17 @@
   <app-root></app-root>
 
   <script>
-    
+    //function that calls other functions depending on the data requested
     function handleInput(){
       stockTicker = document.getElementById('query').value;
   
       searchTicker(stockTicker);
+    }
+
+    //function for clearing search results
+    function clearSearch(){
+      //clear the search bar input
+      document.getElementById('query').value ='';
     }
   
     async function searchTicker(ticker){
@@ -28,6 +34,15 @@
                 }).then((response) => response.json()).then(companyJSON => {return companyJSON});
       
       console.log(companyJSON);
+      
+      console.log("SEPARATINGGGGG")
+      console.log(companyJSON.companyData)
+      console.log(companyJSON.stockDetails)
+
+      console.log("INDIVIDUAL DATA NOW")
+      console.log(companyJSON.companyData.name)
+      console.log(companyJSON.stockDetails.c)
+
     }
   </script>
 </body>
