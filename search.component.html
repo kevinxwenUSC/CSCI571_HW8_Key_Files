@@ -98,10 +98,22 @@
     
     </div>
     
-    <div *ngFor="let instance of companyResponseData" style="text-align: center;">
+    <div>
+        <h2>
+            {{ companyResponseData.ticker}}
+        </h2>
         <h3>
-            {{ instance.companyData.name}}
+            {{ companyResponseData.name}}
         </h3>
+        <p>
+            {{ companyResponseData.exchange}}
+        </p>
+    </div>
+    
+    <br>
+    
+    <div>
+        <img height="200" width="200" [src]="companyResponseData.logo">
     </div>
 
 
