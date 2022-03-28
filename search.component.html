@@ -42,6 +42,14 @@
       position: relative;
       display: inline-block;
     }
+
+    div.StockDetails{
+        display: inline-block;
+        margin-left: 50px;
+        margin-right: 50px;
+
+    }
+
   
   
     /* Responsive Styles */
@@ -98,7 +106,9 @@
     
     </div>
     
-    <div>
+    <div class="StockDetails">
+        <br>
+        <br>
         <h2>
             {{ companyResponseData.ticker}}
         </h2>
@@ -110,10 +120,25 @@
         </p>
     </div>
     
-    <br>
     
-    <div>
-        <img height="200" width="200" [src]="companyResponseData.logo">
+    <div class="StockDetails">
+        <img height="100" width="100" [src]="companyResponseData.logo">
+        <br>
+        <br>
+    </div>
+
+    <div class="StockDetails" style="color: green;">
+        <br>
+        <br>
+        <h2>
+            {{ companyResponseData.c}}
+        </h2>
+        <h3>
+            {{ companyResponseData.d}} {{ companyResponseData.dp }} 
+        </h3>
+        <p>
+            {{ companyResponseData.t}}
+        </p>
     </div>
 
 
