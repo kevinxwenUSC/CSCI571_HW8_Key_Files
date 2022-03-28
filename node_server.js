@@ -63,11 +63,13 @@ app.get('/search/:ticker', (req,res) => {
                     })
         
         //package both finnhub responses into one JSON
-        responseJSON = {"companyData" : first_JSON, "stockDetails": second_JSON};
-        //res.send(JSON.stringify(responseJSON));
+        //responseJSON = {"companyData" : first_JSON, "stockDetails": second_JSON};
+        mergedJSON = Object.assign(first_JSON, second_JSON)
+        
 
         //send final JSON back to client
-        res.send(responseJSON)
+        //res.send(responseJSON)
+        res.send(mergedJSON)
     }
 
     handleStockSearch(stockTicker)
