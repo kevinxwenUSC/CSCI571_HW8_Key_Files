@@ -102,28 +102,16 @@
 
     <div class = "container">
 
-        
-            <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let option of testAuto" [value]="option">
-                  {{option}}
-                </mat-option>
-            </mat-autocomplete>
-            
-            <mat-form-field>
-                <input type="text"
-                placeholder="Pick one"
-                aria-label="Number"
-                matInput
-                [formControl]="myControl"
-                [matAutocomplete]="auto"
-                position="above">
-            </mat-form-field>
-
-    
+   
 
         <div class ="row">
 
             <div class="searchbox">
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of options" [value]="option">
+                      {{option}}
+                    </mat-option>
+                </mat-autocomplete>
                 <input type = "text" matInput [formControl]="myControl" [matAutocomplete]="auto" id = "query" name = "q" placeholder="Enter Stock Ticker Symbol" style="display: inline-block;">
         
                 <button id = "search_button" class="btn btn-outline-secondary" type="submit" style="display: inline-block; border: none; margin-left: -100px;" (click)="getData()">
@@ -176,7 +164,7 @@
 
     <br><br><br><br>
 
-    <mat-tab-group mat-align-tabs="center" backgroundColor="primary">
+    <mat-tab-group mat-align-tabs="center">
         <mat-tab label="Summary"> 
             <div>
                 <br>
@@ -201,8 +189,4 @@
 
         
 
-    
-
-
 </div>
-
