@@ -1,5 +1,12 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatTabsModule} from '@angular/material/tabs';
+import { FormsModule } from '@angular/forms'; 
+import { FormControl } from '@angular/forms';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-search',
@@ -7,6 +14,10 @@ import { HttpClient } from "@angular/common/http";
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
+  myControl = new FormControl();
+  options: string[] = ['One', 'Two', 'Three'];
+  
+  tickerAutocomplete = []
   companyResponseData:any = []
   companyTicker:string = ''
   percentChangeinParen:string = ''
