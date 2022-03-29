@@ -20,6 +20,8 @@
     p {
       margin: 0;
     }
+
+    
   
   
     div.searchDiv{
@@ -48,6 +50,16 @@
         margin-left: 50px;
         margin-right: 50px;
 
+    }
+
+    .example-form {
+        min-width: 150px;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .example-full-width {
+        width: 100%;
     }
 
   
@@ -82,16 +94,37 @@
     }
   </style>
 
-<body style="text-align: center; margin: auto;">
+<div style="text-align: center; margin: auto;">
 
     <h1>Stock Search</h1>
+    
     <br>
+
     <div class = "container">
+
+        
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of testAuto" [value]="option">
+                  {{option}}
+                </mat-option>
+            </mat-autocomplete>
+            
+            <mat-form-field>
+                <input type="text"
+                placeholder="Pick one"
+                aria-label="Number"
+                matInput
+                [formControl]="myControl"
+                [matAutocomplete]="auto"
+                position="above">
+            </mat-form-field>
+
+    
 
         <div class ="row">
 
             <div class="searchbox">
-                <input type = "search" id = "query" name = "q" placeholder="Enter Stock Ticker Symbol" style="display: inline-block;">
+                <input type = "text" matInput [formControl]="myControl" [matAutocomplete]="auto" id = "query" name = "q" placeholder="Enter Stock Ticker Symbol" style="display: inline-block;">
         
                 <button id = "search_button" class="btn btn-outline-secondary" type="submit" style="display: inline-block; border: none; margin-left: -100px;" (click)="getData()">
                     <img src="/assets/search.svg" width="auto" height="auto">
@@ -141,6 +174,35 @@
         </p>
     </div>
 
+    <br><br><br><br>
 
-</body>
+    <mat-tab-group mat-align-tabs="center" backgroundColor="primary">
+        <mat-tab label="Summary"> 
+            <div>
+                <br>
+                <p> <b>High Price: </b>{{ companyResponseData.h}}</p>
+                <p> <b>Low Price: </b> {{ companyResponseData.l}}</p>
+                <p> <b>Open Price: </b> {{ companyResponseData.o}}</p>
+                <p> <b>Price Close: </b> {{ companyResponseData.pc}}</p>
+                <br>
+                <br>
+                <p><b><u>About the Company</u></b></p>
+                <br>
+                <p> <b>IPO Start Date: </b> {{ companyResponseData.ipo}}</p>
+                <p> <b>Industry: </b>  {{ companyResponseData.finnhubIndustry}}</p>
+                <p> <b>Webpage: </b> {{ companyResponseData.weburl}}</p>
+                <p> <b>Company Peers: </b> REPLACE THIS LATER</p>
+            </div>
+        </mat-tab>
+        <mat-tab label="News"> Content 2 </mat-tab>
+        <mat-tab label="Charts"> Content 3 </mat-tab>
+        <mat-tab label="Insights"> Content 4 </mat-tab>
+    </mat-tab-group>
+
+        
+
+    
+
+
+</div>
 
