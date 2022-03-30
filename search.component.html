@@ -62,6 +62,8 @@
         width: 100%;
     }
 
+   
+
   
   
     /* Responsive Styles */
@@ -107,11 +109,11 @@
         <div class ="row">
 
             <div class="searchbox">
-                <mat-autocomplete  #auto="matAutocomplete" >
+                <mat-autocomplete  #auto="matAutocomplete" (optionSelected)="onSelected()">
                     <mat-option *ngIf="isLoading" class="is-loading">Loading...</mat-option>
                     <ng-container *ngIf="!isLoading">
                         <mat-option *ngFor="let stock of filteredStocks" [value]="stock.symbol">
-                            <span><b>{{stock.symbol}}</b></span>
+                            <span>{{stock.symbol}}</span>
                           </mat-option>
                     </ng-container>
                 </mat-autocomplete>
@@ -186,7 +188,23 @@
                 <p> <b>Company Peers: </b> REPLACE THIS LATER</p>
             </div>
         </mat-tab>
-        <mat-tab label="News"> Content 2 </mat-tab>
+
+        <mat-tab label="News"> 
+            <br>
+            <div class = "container">
+                <div class="row gx-5 gy-5">
+                    <div *ngFor="let card of stockNews" class="col-md-6 card flex-row">
+                        <img class="card-img-left" [src]="card.image" alt="No Article Image Available" height="100" width="150" style="display: inline-block;">
+    
+                        <div class="card-block" style="display:inline-block;">
+                            <h5 class="card-title">{{card.headline}}</h5>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+
+        </mat-tab>
         <mat-tab label="Charts"> Content 3 </mat-tab>
         <mat-tab label="Insights"> Content 4 </mat-tab>
     </mat-tab-group>
