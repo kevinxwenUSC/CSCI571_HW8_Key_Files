@@ -78,6 +78,41 @@ app.get('/search/:ticker', (req,res) => {
     //res.end();
 });
 
+//route for autocomplete API calls
+app.get('/autocomplete/:ticker', (req,res) => {
+    stockTicker = req.params.ticker
+    console.log("got the AUTOCOMPLETE request")
+    console.log(stockTicker)
+    var tickerOptions;
+
+    async function handleAutocomplete(stockTicker){
+        //finnhub API call for autocomplete options
+        //https://finnhub.io/api/v1/search?q=AMZ&token=%3CAPI_KEY
+        finnHub_details_URL = "https://finnhub.io/api/v1/search?q=" + stockTicker + "&token=c83mf0aad3ift3bmcrr0"
+
+        await axios.get(finnHub_details_URL)
+                   .then(result => {
+                        console.log(`statusCode: ${result.status}`)
+                        console.log(result.data)
+                        //send JSON result back to front end
+                        tickerOptions = result.data
+                        //res.write(JSON.stringify(result.data) + "\n")
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    })
+
+        res.send(tickerOptions)
+
+    }
+
+    handleAutocomplete(stockTicker)
+    
+
+});
+
+
+
 //display which port the server is listening on
 app.listen(port, () => {
     console.log(`Server listening on the port::${port}`);
