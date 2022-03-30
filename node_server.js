@@ -29,6 +29,7 @@ app.get('/search/:ticker', (req,res) => {
     async function handleStockSearch(stockTicker){
         var first_JSON;
         var second_JSON;
+        var news_JSON
 
         //generate url for the API call to finnhub
         finnHub_URL = "https://finnhub.io/api/v1/stock/profile2?symbol=" + stockTicker + "&token=c83mf0aad3ift3bmcrr0"
@@ -61,7 +62,9 @@ app.get('/search/:ticker', (req,res) => {
                     .catch(error => {
                         console.error(error)
                     })
-        
+
+
+
         //package both finnhub responses into one JSON
         //responseJSON = {"companyData" : first_JSON, "stockDetails": second_JSON};
         mergedJSON = Object.assign(first_JSON, second_JSON)
@@ -76,6 +79,65 @@ app.get('/search/:ticker', (req,res) => {
 
     //res.send() is equivalant to res.write() + res.end()
     //res.end();
+});
+
+//route for news API calls
+app.get('/news/:ticker', (req,res) => {
+    stockTicker = req.params.ticker
+    console.log("got the NEWS request")
+    console.log(stockTicker)
+
+    var newsJSON;
+
+    async function handleNews(stockTicker){
+
+        //generate date for news tab API call
+        let date_ob = new Date();
+
+        let day = ("0" + date_ob.getDate()).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+
+        currentDateString = year + '-' + month + '-' + day;
+
+        console.log(currentDateString)
+        
+        //generate date for 7 days ago to get interval for the news articles
+        var beforedate = new Date();
+        var priordate = new Date(new Date().setDate(beforedate.getDate()-7));
+
+        let priorday = ("0" + priordate.getDate()).slice(-2);
+        let priormonth = ("0" + (priordate.getMonth() + 1)).slice(-2);
+        let prioryear = priordate.getFullYear();
+
+        priorDateString = prioryear + '-' + priormonth + '-' + priorday;
+
+        console.log(priorDateString)
+
+        //https://finnhub.io/api/v1/company-news?symbol=%3CTICKER%3E&from=%3CDATE%3E&to=%3CDATE%3E&token=%3CAPI_KEY
+        //generate URL for news API call
+        finnHub_news_URL = "https://finnhub.io/api/v1/company-news?symbol=" + stockTicker + "&from=" + priorDateString + "&to=" + currentDateString + "&token=c83mf0aad3ift3bmcrr0"
+        console.log(finnHub_news_URL)
+
+        await axios.get(finnHub_news_URL)
+                   .then(result => {
+                        console.log(`statusCode: ${result.status}`)
+                        //console.log(result.data)
+                        //send JSON result back to front end
+                        newsJSON = result.data
+                        //res.write(JSON.stringify(result.data) + "\n")
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    })
+        
+
+        res.send(newsJSON)
+
+    }
+
+    handleNews(stockTicker)
+
 });
 
 //route for autocomplete API calls
