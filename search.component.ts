@@ -29,18 +29,20 @@ export class SearchComponent implements OnInit {
   selectedStock: any = "";
 
   
-  tickerAutocomplete = []
   companyResponseData:any = []
   companyTicker:string = ''
   percentChangeinParen:string = ''
+
+  stockNews:any = []
+  topStockNews:any = []
   constructor(private http: HttpClient, public element: ElementRef) {
    
   }
 
 
   onSelected() {
-    console.log(this.selectedStock);
-    this.selectedStock = this.selectedStock;
+    //option was chosen so send API call for the selected ticker automatically
+    this.getData()
   }
 
   displayWith(value: any) {
@@ -96,6 +98,7 @@ export class SearchComponent implements OnInit {
   }
 
   getData(){
+    //call to node.js server for stock details
     this.companyTicker = (<HTMLInputElement>document.getElementById('query')).value;
     console.log(this.companyTicker)
     const url ='/search/' + this.companyTicker
@@ -103,6 +106,17 @@ export class SearchComponent implements OnInit {
     this.http.get(url).subscribe((res)=>{
       this.companyResponseData = res
       console.log(this.companyResponseData)
+
+    })
+
+    //separate call to node.js server for the news 
+    const news_url = '/news/' + this.companyTicker
+
+    this.http.get(news_url).subscribe((res)=>{
+      this.stockNews = res
+      //only show top 20 results
+      this.topStockNews = this.stockNews.slice(0,20)
+      console.log(this.topStockNews)
 
     })
   }
