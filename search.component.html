@@ -100,6 +100,30 @@
     
     <br>
 
+    <div class="wrapper">
+        <h2>
+          Testing Stock Autocomplete
+        </h2>
+        
+          <input matInput placeholder="Search Stock" [(ngModel)]="selectedStock" [matAutocomplete]="auto"
+            [formControl]="myControl" placeholder="Enter Stock Ticker">
+          
+          <mat-autocomplete  #auto="matAutocomplete" >
+            
+
+              <mat-option *ngFor="let stock of filteredStocks" [value]="stock.symbol">
+                <span><b>{{stock.symbol}}</b></span>
+              </mat-option>
+           
+          </mat-autocomplete>
+        
+      
+        <br>
+      
+        
+      
+      </div>
+
     <div class = "container">
 
    
@@ -112,6 +136,7 @@
                       {{option}}
                     </mat-option>
                 </mat-autocomplete>
+
                 <input type = "text" matInput [formControl]="myControl" [matAutocomplete]="auto" id = "query" name = "q" placeholder="Enter Stock Ticker Symbol" style="display: inline-block;">
         
                 <button id = "search_button" class="btn btn-outline-secondary" type="submit" style="display: inline-block; border: none; margin-left: -100px;" (click)="getData()">
