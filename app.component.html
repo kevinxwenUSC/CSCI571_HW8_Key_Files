@@ -31,11 +31,6 @@
     margin: 0;
   }
 
-  body{
-    background-image: url("/assets/background-graph.jpg");
-    background-repeat: no-repeat; 
-    background-size: cover;
-  }
 
   div.searchDiv{
     text-align: center;
@@ -58,6 +53,19 @@
     display: inline-block;
   }
 
+  
+  /*.navbar-brand{
+    margin-right: 40em;
+  }*/
+
+  .nav-item{
+    margin-right: 10px;
+  }
+
+  /*.navbar-nav li{
+    border: 1px solid white;
+  }*/
+
 
   /* Responsive Styles */
   @media screen and (max-width: 767px) {
@@ -79,6 +87,8 @@
       right: 120px;
       transform: rotate(-5deg);
     }
+
+    
   }
 
   @media screen and (max-width: 575px) {
@@ -102,31 +112,57 @@
 
 <body style="text-align: center; margin: auto;">
 
-  
-  <h1>Stock Search</h1>
-  <div class = "container">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
 
-    <div class ="row">
+    <div class="container">
 
-      <div class="searchbox">
-        <input type = "search" id = "query" name = "q" placeholder="Enter Stock Ticker Symbol" style="display: inline-block;">
-        
-        <button id = "search_button" class="btn btn-outline-secondary" type="submit" style="display: inline-block; border: none; margin-left: -100px;" onclick= handleInput()>
-          <img src="/assets/search.svg" width="auto" height="auto">
-        </button>
-        
-        <button class="btn btn-outline-secondary" type="submit" style="display: inline-block; border: none;">
-          <img src="/assets/x.svg" width="28px" height="28px">
-        </button>
+      <a class="navbar-brand pe-5" href="#">Stock Search</a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+
+        <span class="navbar-toggler-icon"></span>
+
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+
+        <ul class="navbar-nav ml-auto">
+
+          <li class="nav-item ps-5">
+
+            <nav>
+              <a class="nav-link" href="#" routerLink = "/search" routerLinkActive= "active">Search</a>
+            </nav>
+
+          </li>
+
+          <li class="nav-item">
+
+            <nav>
+              <a class="nav-link" href="#" routerLink = "/watchlist" routerLinkActive= "active">Watchlist</a>
+            </nav>
+
+          </li>
+
+          <li class="nav-item">
+
+            <nav>
+              <a class="nav-link" href="#" routerLink = "/portfolio" routerLinkActive= "active">Portfolio</a>
+            </nav>         
+
+          </li>
+
+        </ul>
+
       </div>
 
-      
-
     </div>
-    
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-    
-  </div>
+
+  </nav>
+
+  <br><br><br><br><br>
+
+  
 
     
 </body>
