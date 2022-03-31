@@ -1,0 +1,110 @@
+chartOptions = {
+
+    /*rangeSelector: {
+      selected: 2
+    },*/
+
+    title: {
+      text: 'AAPL Historical'
+    },
+
+    subtitle: {
+      text: 'With SMA and Volume by Price technical indicators'
+    },
+
+    /*xAxis:{
+      categories:["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    },
+    yAxis: {          
+      title:{
+         text:"Temperature °C"
+      } 
+    },*/
+
+    yAxis: [{
+      startOnTick: false,
+      endOnTick: false,
+      labels: {
+          align: 'right',
+          x: -3
+      },
+      title: {
+          text: 'OHLC'
+      },
+      height: '60%',
+      lineWidth: 2,
+      resize: {
+          enabled: true
+      }
+    }, {
+      labels: {
+          align: 'right',
+          x: -3
+      },
+      title: {
+          text: 'Volume'
+      },
+      top: '65%',
+      height: '35%',
+      offset: 0,
+      lineWidth: 2
+    }],
+
+    tooltip: {
+      split: true
+    },
+
+    /*plotOptions: {
+      series: {
+          dataGrouping: {
+              units: this.groupingUnits
+          }
+      }
+    },*/
+
+    series: [
+        /*{
+           type: "spline",
+           name: 'Tokyo',
+           data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2,26.5, 23.3, 18.3, 13.9, 9.6]
+        },
+        {
+           type: "spline",
+           name: 'New York',
+           data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8,24.1, 20.1, 14.1, 8.6, 2.5]
+        }*/
+      {
+      type: 'candlestick',
+      name: 'AAPL',
+      id: 'aapl',
+      zIndex: 2,
+      data: this.ohlc //as Highcharts.SeriesCandlestickOptions[]
+    }, {
+      type: 'column',
+      name: 'Volume',
+      id: 'volume',
+      data: this.volume, //as Highcharts.SeriesColumnOptions[][],
+      yAxis: 1
+    }, {
+      type: 'vbp',
+      linkedTo: 'aapl',
+      params: {
+          volumeSeriesID: 'volume'
+      },
+      dataLabels: {
+          enabled: false
+      },
+      zoneLines: {
+          enabled: false
+      }
+    }, {
+      type: 'sma',
+      linkedTo: 'aapl',
+      zIndex: 1,
+      marker: {
+          enabled: false
+      }
+    }] as Highcharts.SeriesOptionsType[]
+
+   };
