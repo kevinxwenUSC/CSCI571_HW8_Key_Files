@@ -34,7 +34,17 @@ export class SearchComponent implements OnInit {
   percentChangeinParen:string = ''
 
   stockNews:any = []
-  topStockNews:any = []
+
+  recommendData:any = []
+
+  socialSentimentData:any = []
+
+  companyPeerData:any = []
+
+  companyEarningData:any = []
+
+  companyHistoryData:any = []
+
   constructor(private http: HttpClient, public element: ElementRef) {
    
   }
@@ -114,10 +124,54 @@ export class SearchComponent implements OnInit {
 
     this.http.get(news_url).subscribe((res)=>{
       this.stockNews = res
-      //only show top 20 results
-      this.topStockNews = this.stockNews.slice(0,20)
-      console.log(this.topStockNews)
+      console.log(this.stockNews)
 
     })
+
+    //separate call to node.js server for company recommendation trends
+    const recommend_url = '/recommend/' + this.companyTicker
+
+    this.http.get(recommend_url).subscribe((res)=>{
+      this.recommendData = res
+      console.log(this.recommendData)
+
+    })
+
+    //separate call for social sentiment data
+    const sentiment_url = '/sentiment/' + this.companyTicker
+
+    this.http.get(sentiment_url).subscribe((res)=>{
+      this.socialSentimentData = res
+      console.log(this.socialSentimentData)
+
+    })
+
+    //separate call for company peer data
+    const peer_url = '/peer/' + this.companyTicker
+
+    this.http.get(peer_url).subscribe((res)=>{
+      this.companyPeerData= res
+      console.log(this.companyPeerData)
+
+    })
+
+    //separate call for company earnings data
+    const earning_url = '/earning/' + this.companyTicker
+
+    this.http.get(earning_url).subscribe((res)=>{
+      this.companyEarningData= res
+      console.log(this.companyEarningData)
+
+    })
+
+    //separate call for company historical candle data for chart
+    const history_url = '/history/' + this.companyTicker
+
+    this.http.get(history_url).subscribe((res)=>{
+      this.companyHistoryData= res
+      console.log(this.companyHistoryData)
+
+    })
+
   }
 }
