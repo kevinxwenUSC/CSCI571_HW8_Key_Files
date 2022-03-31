@@ -13,7 +13,7 @@ import IndicatorsCore from "highcharts/indicators/indicators";
 import vbp from 'highcharts/indicators/volume-by-price';
 IndicatorsCore(Highcharts);
 vbp(Highcharts);
-import {Options} from 'highcharts/highstock'
+//import {Options} from 'highcharts/highstock'
 
 
 
@@ -64,10 +64,7 @@ export class SearchComponent implements OnInit {
   //store our combined data for highcharts to use
   ohlc:any = []
   volume:any = []
-  groupingUnits = [[
-    'month',
-    [1, 2, 3, 4, 6]
-  ]];
+  groupingUnits:any = []
 
   //stuff for highcharts to be defined later once data is recieved
   highcharts:any
@@ -244,13 +241,26 @@ export class SearchComponent implements OnInit {
     //generate chart once all data is ready
 
     this.chartLoading = true
+    this.groupingUnits = [[
+      'month',
+      [1, 3, 6]
+    ]];
     //highchart settings stuff here
     this.highcharts = Highcharts;
 
     this.chartOptions = {
 
+      navigator: {
+        enabled: true
+      },
+
+      scrollbar: {
+        enabled: true
+      },
+
       rangeSelector: {
-        selected: 2
+        enabled: true
+        //selected: 2
       },
   
       title: {
@@ -348,3 +358,7 @@ export class SearchComponent implements OnInit {
   }
 
 }
+
+//have app.component.html have the same search bar, but when search button is clicked, it routes to search.component.html. Use the ngOninit() to
+//set the desired ticker from local storage and then retrieve it as normal. The clear button should just route back to app.component.html
+//and a subsequent search just sets a new ticker and calls getData() again
