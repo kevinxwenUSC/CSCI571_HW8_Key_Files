@@ -9,6 +9,10 @@ import {map, startWith} from 'rxjs/operators';
 import { debounceTime, tap, switchMap, finalize, distinctUntilChanged, filter } from 'rxjs/operators';
 
 import * as Highcharts from "highcharts/highstock";
+import IndicatorsCore from "highcharts/indicators/indicators";
+import vbp from 'highcharts/indicators/volume-by-price';
+IndicatorsCore(Highcharts);
+vbp(Highcharts);
 import {Options} from 'highcharts/highstock'
 
 
@@ -61,48 +65,14 @@ export class SearchComponent implements OnInit {
   ohlc:any = []
   volume:any = []
   groupingUnits = [[
-    'week',                         // unit name
-    [1]                             // allowed multiples
-  ], [
     'month',
     [1, 2, 3, 4, 6]
   ]];
 
-
+  //stuff for highcharts to be defined later once data is recieved
   highcharts:any
   chartOptions:any
   chartLoading = true
-  //highchart settings stuff here
-  /*highcharts = Highcharts;
-  chartOptions = {
-
-    rangeSelector: {
-      selected: 1
-    },
-
-    title: {
-        text: 'AAPL Stock Price'
-    },
-
-    series: [{
-      type: 'candlestick',
-      name: 'AAPL Stock Price',
-      data: this.ohlc,
-      dataGrouping: {
-          units: [
-              [
-                  'week', // unit name
-                  [1] // allowed multiples
-              ], [
-                  'month',
-                  [1, 2, 3, 4, 6]
-              ]
-          ]
-      }
-    }] as Highcharts.SeriesOptionsType[]
-
-   };*/
-
 
 
 
@@ -276,34 +246,102 @@ export class SearchComponent implements OnInit {
     this.chartLoading = true
     //highchart settings stuff here
     this.highcharts = Highcharts;
+
     this.chartOptions = {
 
       rangeSelector: {
-        selected: 1
+        selected: 2
       },
-
+  
       title: {
-        text: 'AAPL Stock Price'
+        text: this.companyTicker + ' Historical'
+      },
+  
+      subtitle: {
+        text: 'With SMA and Volume by Price technical indicators'
       },
 
+      xAxis: {
+        type: 'datetime',
+      },
+
+      
+  
+      yAxis: [{
+        startOnTick: false,
+        endOnTick: false,
+        labels: {
+            align: 'right',
+            x: -3
+        },
+        title: {
+            text: 'OHLC'
+        },
+        height: '60%',
+        lineWidth: 2,
+        resize: {
+            enabled: true
+        }
+      }, {
+        labels: {
+            align: 'right',
+            x: -3
+        },
+        title: {
+            text: 'Volume'
+        },
+        top: '65%',
+        height: '35%',
+        offset: 0,
+        lineWidth: 2
+      }],
+  
+      tooltip: {
+        split: true
+      },
+  
+      plotOptions: {
+        series: {
+            dataGrouping: {
+                units: this.groupingUnits
+            }
+        }
+      },
+  
       series: [{
         type: 'candlestick',
-        name: 'AAPL Stock Price',
-        data: this.ohlc,
-        dataGrouping: {
-          units: [
-              [
-                  'week', // unit name
-                  [1] // allowed multiples
-              ], [
-                  'month',
-                  [1, 2, 3, 4, 6]
-              ]
-          ]
+        name: this.companyTicker,
+        id: 'aapl',
+        zIndex: 2,
+        data: this.ohlc //as Highcharts.SeriesCandlestickOptions[]
+      }, {
+        type: 'column',
+        name: 'Volume',
+        id: 'volume',
+        data: this.volume, //as Highcharts.SeriesColumnOptions[][],
+        yAxis: 1
+      }, {
+        type: 'vbp',
+        linkedTo: 'aapl',
+        params: {
+            volumeSeriesID: 'volume'
+        },
+        dataLabels: {
+            enabled: false
+        },
+        zoneLines: {
+            enabled: false
+        }
+      }, {
+        type: 'sma',
+        linkedTo: 'aapl',
+        zIndex: 1,
+        marker: {
+            enabled: false
         }
       }] as Highcharts.SeriesOptionsType[]
-
-   };
+  
+     };
    
    this.chartLoading = false
 
