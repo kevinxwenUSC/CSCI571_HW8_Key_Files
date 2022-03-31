@@ -8,7 +8,8 @@ import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import { debounceTime, tap, switchMap, finalize, distinctUntilChanged, filter } from 'rxjs/operators';
 
-import * as Highcharts from 'highcharts';
+import * as Highcharts from "highcharts/highstock";
+import {Options} from 'highcharts/highstock'
 
 
 
@@ -59,52 +60,49 @@ export class SearchComponent implements OnInit {
   //store our combined data for highcharts to use
   ohlc:any = []
   volume:any = []
+  groupingUnits = [[
+    'week',                         // unit name
+    [1]                             // allowed multiples
+  ], [
+    'month',
+    [1, 2, 3, 4, 6]
+  ]];
 
 
-
+  highcharts:any
+  chartOptions:any
+  chartLoading = true
   //highchart settings stuff here
-  highcharts = Highcharts;
-  chartOptions = {   
-      chart: {
-         type: "spline"
-      },
-      title: {
-         text: "Monthly Average Temperature"
-      },
-      subtitle: {
-         text: "Source: WorldClimate.com"
-      },
-      xAxis:{
-         categories:["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-      },
-      yAxis: {          
-         title:{
-            text:"Temperature °C"
-         } 
-      },
-      tooltip: {
-         valueSuffix:" °C"
-      },
-      series: [
-         {
-            name: 'Tokyo',
-            data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2,26.5, 23.3, 18.3, 13.9, 9.6]
-         },
-         {
-            name: 'New York',
-            data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8,24.1, 20.1, 14.1, 8.6, 2.5]
-         },
-         {
-            name: 'Berlin',
-            data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
-         },
-         {
-            name: 'London',
-            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-         }
-      ] as Highcharts.SeriesOptionsType[]
-   };
+  /*highcharts = Highcharts;
+  chartOptions = {
+
+    rangeSelector: {
+      selected: 1
+    },
+
+    title: {
+        text: 'AAPL Stock Price'
+    },
+
+    series: [{
+      type: 'candlestick',
+      name: 'AAPL Stock Price',
+      data: this.ohlc,
+      dataGrouping: {
+          units: [
+              [
+                  'week', // unit name
+                  [1] // allowed multiples
+              ], [
+                  'month',
+                  [1, 2, 3, 4, 6]
+              ]
+          ]
+      }
+    }] as Highcharts.SeriesOptionsType[]
+
+   };*/
+
 
 
 
@@ -169,6 +167,7 @@ export class SearchComponent implements OnInit {
         console.log(this.stockOptions.count);
         console.log(this.filteredStocks)
       });
+
   }
 
   getData(){
@@ -264,8 +263,50 @@ export class SearchComponent implements OnInit {
       }
 
       console.log(this.volume)
+      console.log(this.ohlc)
+
+      this.generateChart()
 
     })
+  }
+
+  generateChart(){
+    //generate chart once all data is ready
+
+    this.chartLoading = true
+    //highchart settings stuff here
+    this.highcharts = Highcharts;
+    this.chartOptions = {
+
+      rangeSelector: {
+        selected: 1
+      },
+
+      title: {
+        text: 'AAPL Stock Price'
+      },
+
+      series: [{
+        type: 'candlestick',
+        name: 'AAPL Stock Price',
+        data: this.ohlc,
+        dataGrouping: {
+          units: [
+              [
+                  'week', // unit name
+                  [1] // allowed multiples
+              ], [
+                  'month',
+                  [1, 2, 3, 4, 6]
+              ]
+          ]
+        }
+      }] as Highcharts.SeriesOptionsType[]
+
+   };
+   
+   this.chartLoading = false
 
   }
+
 }
