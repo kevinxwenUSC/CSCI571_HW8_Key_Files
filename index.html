@@ -6,17 +6,29 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    body{
+    background-image: url("/assets/background-graph.jpg");
+    background-repeat: no-repeat; 
+    background-size: 100%;
+    background-attachment: fixed;
+  }
+  </style>
 </head>
 <body>
   <app-root></app-root>
 
   <script>
+
+    //put all the JSON display divs into Bootstrap columns or something
+    //lookup toggleable and dynamic tabs in Bootsrap for the rest of the display stuff, send another API call each time a differnt tab is selected
+
     //function that calls other functions depending on the data requested
-    function handleInput(){
+    /*function handleInput(){
       stockTicker = document.getElementById('query').value;
   
       searchTicker(stockTicker);
-    }
+    }*/
 
     //function for clearing search results
     function clearSearch(){
@@ -24,7 +36,7 @@
       document.getElementById('query').value ='';
     }
   
-    async function searchTicker(ticker){
+    /*async function searchTicker(ticker){
       console.log("got here!!!");
       console.log(ticker);
 
@@ -43,7 +55,9 @@
       console.log(companyJSON.companyData.name)
       console.log(companyJSON.stockDetails.c)
 
-    }
+      resultDisplayJson = companyJSON;
+
+    }*/
   </script>
 </body>
 </html>
