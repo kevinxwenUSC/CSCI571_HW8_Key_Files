@@ -6,6 +6,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatCardModule } from '@angular/material/card';
+import { HighchartsChartModule } from 'highcharts-angular';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -36,7 +38,9 @@ import { PortfolioComponent } from './components/portfolio/portfolio.component';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatCardModule,
+    HighchartsChartModule
   ],
   providers: [],
   bootstrap: [AppComponent]
