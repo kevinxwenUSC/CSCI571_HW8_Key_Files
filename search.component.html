@@ -168,7 +168,7 @@
             {{ companyResponseData.d}} {{ companyResponseData.dp }} 
         </h3>
         <p>
-            {{ companyResponseData.t}}
+            {{ companyResponseTime }}
         </p>
     </div>
 
@@ -189,7 +189,13 @@
                 <p> <b>IPO Start Date: </b> {{ companyResponseData.ipo}}</p>
                 <p> <b>Industry: </b>  {{ companyResponseData.finnhubIndustry}}</p>
                 <p> <b>Webpage: </b> {{ companyResponseData.weburl}}</p>
-                <p> <b>Company Peers: </b> REPLACE THIS LATER</p>
+                
+                <p><b>Company Peers: </b></p>
+                <div class="row">
+                    <div class="col flex-row" *ngFor="let peer of companyPeerData" style="display: inline-block;">
+                        <a href="https://www.freecodecamp.org/" target="_blank">{{peer}}</a> 
+                   </div>
+                </div>
             </div>
 
             <div *ngIf="!hourlyChartLoading && hourlyChartOptions">
@@ -223,7 +229,7 @@
                 <highcharts-chart 
                     [Highcharts] = "highcharts" 
                     [options] = "chartOptions" 
-                    style = "width: 100%; height: 500px; display: block;">
+                    style = "width: 100%; height: 500px; display: inline-block;">
                 </highcharts-chart>
             </div>
 
