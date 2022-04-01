@@ -186,7 +186,7 @@ app.get('/history/:ticker', (req,res) => {
         await axios.get(finnHub_history_URL)
                    .then(result => {
                         console.log(`statusCode: ${result.status}`)
-                        console.log(result.data)
+                        //console.log(result.data)
                         //send JSON result back to front end
                         historyJSON = result.data
                         //res.write(JSON.stringify(result.data) + "\n")
@@ -365,6 +365,73 @@ app.get('/autocomplete/:ticker', (req,res) => {
     
 
 });
+
+
+//route for company historic candle data
+app.get('/hourly/:ticker', (req,res) => {
+    stockTicker = req.params.ticker
+    console.log("got the HOURLY request")
+    console.log(stockTicker)
+    var hourlyJSON;
+
+
+    async function handleHourly(stockTicker){
+
+        //generate date for history chart tab API call
+        let date_ob = new Date();
+
+        let day = ("0" + date_ob.getDate()).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+
+        currentDateString = year + '-' + month + '-' + day;
+
+        console.log(currentDateString)
+
+        currentUnixTime = Math.floor(date_ob.getTime() / 1000).toString()
+        //currentUnixTime = Math.floor(date_ob.getTime()).toString()
+        
+        //generate date for 6 hours ago to get interval for the
+        var beforedate = new Date();
+        //var priordate = new Date(new Date().setDate(beforedate.getHours()-6));
+        var priordate = new Date(new Date().setDate(beforedate.getDate()-1));
+
+        let priorday = ("0" + priordate.getDate()).slice(-2);
+        let priormonth = ("0" + (priordate.getMonth() + 1)).slice(-2);
+        let prioryear = priordate.getFullYear();
+
+        priorDateString = prioryear + '-' + priormonth + '-' + priorday;
+
+        console.log(priorDateString)
+
+        yesterdayUnixTime = Math.floor(priordate.getTime() / 1000).toString()
+        //yesterdayUnixTime = Math.floor(priordate.getTime()).toString()
+
+
+        //finnhub API call for company candle history data
+        //https://finnhub.io/api/v1/stock/candle?symbol=AAPL&resolution=1&from=1631022248&to=1631627048&token=<API_KEY>
+        finnHub_hourly_URL = "https://finnhub.io/api/v1/stock/candle?symbol=" + stockTicker + "&resolution=5&from=" + yesterdayUnixTime + "&to=" + currentUnixTime + "&token=c83mf0aad3ift3bmcrr0"
+
+        await axios.get(finnHub_hourly_URL)
+                   .then(result => {
+                        console.log(`statusCode: ${result.status}`)
+                        console.log(result.data)
+                        //send JSON result back to front end
+                        hourlyJSON = result.data
+                        //res.write(JSON.stringify(result.data) + "\n")
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    })
+
+        res.send(hourlyJSON)
+
+    }
+
+    handleHourly(stockTicker)
+});
+
+
 
 
 
