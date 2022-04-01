@@ -36,6 +36,7 @@ export class SearchComponent implements OnInit {
 
   //store JSON data from node.js server responses
   companyResponseData:any = []
+  companyResponseTime:any
   companyTicker:string = ''
   percentChangeinParen:string = ''
 
@@ -173,6 +174,7 @@ export class SearchComponent implements OnInit {
 
     this.http.get(url).subscribe((res)=>{
       this.companyResponseData = res
+      this.companyResponseTime = new Date(this.companyResponseData.t * 1000)
       console.log(this.companyResponseData)
 
     })
