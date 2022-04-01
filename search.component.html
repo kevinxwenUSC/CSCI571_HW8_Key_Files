@@ -191,6 +191,14 @@
                 <p> <b>Webpage: </b> {{ companyResponseData.weburl}}</p>
                 <p> <b>Company Peers: </b> REPLACE THIS LATER</p>
             </div>
+
+            <div *ngIf="!hourlyChartLoading && hourlyChartOptions">
+                <highcharts-chart 
+                    [Highcharts] = "hourlyChart" 
+                    [options] = "hourlyChartOptions" 
+                    style = "width: 50%; height: 300px; display: inline-block;">
+                </highcharts-chart>
+            </div>
         </mat-tab>
 
         <mat-tab label="News"> 
