@@ -39,6 +39,8 @@ export class SearchComponent implements OnInit {
   companyTicker:string = ''
   percentChangeinParen:string = ''
 
+  stockHourly:any = []
+
   stockNews:any = []
 
   recommendData:any = []
@@ -70,6 +72,13 @@ export class SearchComponent implements OnInit {
   highcharts:any
   chartOptions:any
   chartLoading = true
+
+  //stuff for hourly price chart
+  hourlyChart:any
+  hourlyChartOptions:any
+  hourlyChartLoading = true
+  hourlyTimestamps:any = []
+  hourlyPrices:any = []
 
   //stuff for insights charts, defined once data is recieved
   recommendChart:any
@@ -169,6 +178,15 @@ export class SearchComponent implements OnInit {
     })
 
     //separate call to node.js server for the news 
+    const hourly_url = '/hourly/' + this.companyTicker
+
+    this.http.get(hourly_url).subscribe((res)=>{
+      this.stockHourly = res
+      console.log(this.stockHourly)
+
+    })
+
+    //separate call to node.js server for the news 
     const news_url = '/news/' + this.companyTicker
 
     this.http.get(news_url).subscribe((res)=>{
@@ -255,10 +273,71 @@ export class SearchComponent implements OnInit {
       console.log(this.volume)
       console.log(this.ohlc)
 
+      this.generateHourlyChart()
       this.generateChart()
       this.generateInsights()
 
     })
+  }
+
+  generateHourlyChart(){
+
+    this.hourlyTimestamps = []
+    this.hourlyPrices = []
+
+    //every 3 timestamps for this covers approx 1 hour
+    for(let i = 0; i < this.stockHourly.c.length; i++){
+      //this.hourlyTimestamps.push(this.stockHourly.t[i] * 1000)
+      //use closing price since its more stable for the hour
+      this.hourlyPrices.push([this.stockHourly.t[i] * 1000, this.stockHourly.c[i]])
+    }
+
+    this.hourlyChart = Highcharts;
+    this.hourlyChartOptions = {
+
+      rangeSelector: {
+        selected: 1
+      },
+
+      title: {
+        text: this.companyTicker + " Hourly Price Variation"
+      },
+
+      xAxis:{
+        type: 'datetime',
+        //categories: this.hourlyTimestamps
+      },
+
+
+      yAxis: {
+        title: {
+            text: 'Price'
+        }
+      },
+
+
+      series: [{
+        name: this.companyTicker,
+        data: this.hourlyPrices
+      }],
+
+      responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    layout: 'horizontal',
+                    align: 'center',
+                    verticalAlign: 'bottom'
+                }
+            }
+        }]
+      }
+
+    }
+    this.hourlyChartLoading = false
   }
 
   generateChart(){
