@@ -71,6 +71,25 @@ export class SearchComponent implements OnInit {
   chartOptions:any
   chartLoading = true
 
+  //stuff for insights charts, defined once data is recieved
+  recommendChart:any
+  recommendChartOptions:any
+  recommendChartLoading = true
+  recommendPeriod:any = []
+  strongBuy:any = []
+  buy:any = []
+  hold:any = []
+  sell:any = []
+  strongSell:any = []
+
+  //stuff for surprise chart
+  surpriseChart:any
+  surpriseChartOptions:any
+  surpriseChartLoading = true
+  surprisePeriod:any = []
+  surpriseActual:any = []
+  surpriseEstimate:any = []
+
 
 
 
@@ -223,6 +242,10 @@ export class SearchComponent implements OnInit {
       console.log(this.historyTimeStamp)
       console.log(this.historyNormalTime)
 
+      //clear ohlc and volume data each time so theres no overlap between charts
+      //this.volume = []
+      //this.ohlc = []
+
       //fill the ohlc and volume data for highcharts to use
       for(let i = 0; i < this.historyTimeStamp.length; i++){
         this.ohlc.push([this.historyNormalTime[i], this.historyOpenPrice[i], this.historyHighPrice[i], this.historyLowPrice[i], this.historyClosePrice[i]]);
@@ -233,6 +256,7 @@ export class SearchComponent implements OnInit {
       console.log(this.ohlc)
 
       this.generateChart()
+      this.generateInsights()
 
     })
   }
@@ -354,6 +378,147 @@ export class SearchComponent implements OnInit {
      };
    
    this.chartLoading = false
+
+  }
+
+  //function to generate all charts/tables for insights tab
+  generateInsights(){
+    //clear the previous company's data
+    this.recommendPeriod = []
+
+    //fill out arrays needed for stacked bar chart
+    for(let i = 0; i < 4; i++){
+      this.recommendPeriod.push(this.recommendData[i].period)
+      this.strongBuy.push(this.recommendData[i].strongBuy)
+      this.buy.push(this.recommendData[i].buy)
+      this.hold.push(this.recommendData[i].hold)
+      this.sell.push(this.recommendData[i].sell)
+      this.strongSell.push(this.recommendData[i].strongSell)
+    }
+
+
+    //setup the recommendation trends chart
+    this.recommendChart = Highcharts
+    this.recommendChartOptions = {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Recommendation Trends'
+      },
+      xAxis: {
+        categories: this.recommendPeriod
+      },
+      yAxis: {
+        min: 0,
+        title: {
+            text: '#Analysis'
+        },
+        stackLabels: {
+            enabled: true,
+            style: {
+                fontWeight: 'bold',
+                color: ( // theme
+                    ['#03571f', '#09e33c', '#995308', '#ff0d21','#3d0207']
+                    
+                ) //|| 'gray'
+            }
+         } 
+      },
+
+      legend: {
+        /*x: -10,
+        verticalAlign: 'bottom',
+        y: 25,
+        floating: true,*/
+        backgroundColor:
+            'white',
+        borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+      },
+
+      tooltip: {
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+      },
+
+      plotOptions: {
+        column: {
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true
+            }
+        }
+      },
+
+      series: [{
+        name: 'Strong Buy',
+        data: this.strongBuy
+      }, {
+        name: 'Buy',
+        data: this.buy
+      }, {
+        name: 'Hold',
+        data: this.hold
+      }, {
+        name: 'Sell',
+        data: this.sell
+      }, {
+        name: 'Strong Sell',
+        data: this.strongSell
+      }] as Highcharts.SeriesOptionsType[]
+    
+    };
+    this.recommendChartLoading = false
+
+
+    //clear previous data
+    this.surprisePeriod = []
+    this.surpriseEstimate = []
+    this.surpriseActual = []
+
+    //fill data for earning chart to use
+    for(let i = 0; i < 4; i++){
+      this.surprisePeriod.push(this.companyEarningData[i].period)
+      this.surpriseEstimate.push(this.companyEarningData[i].estimate)
+      this.surpriseActual.push(this.companyEarningData[i].actual)
+    }
+
+    //setup the recommendation trends chart
+    this.surpriseChart = Highcharts
+    this.surpriseChartOptions = {
+      chart: {
+        type: "spline"
+      },
+      title: {
+        text: "Historical EPS Surprises"
+      },
+      
+      xAxis:{
+        categories: this.surprisePeriod
+      },
+      yAxis: {          
+        title:{
+           text:"Quarterly EPS"
+        } 
+      },
+      tooltip: {
+        valueSuffix:" °C"
+      },
+      series: [
+        {
+           name: 'Actual',
+           data: this.surpriseActual
+        },
+        {
+           name: 'Estimate',
+           data: this.surpriseEstimate
+        }
+      ] as Highcharts.SeriesOptionsType[]
+    };
+    this.surpriseChartLoading = false
+
 
   }
 
