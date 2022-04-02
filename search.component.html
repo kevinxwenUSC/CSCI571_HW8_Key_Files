@@ -128,7 +128,7 @@
                     <img src="/assets/search.svg" width="auto" height="auto">
                 </button>
         
-                <button class="btn btn-outline-secondary" type="submit" style="display: inline-block; border: none;" onclick=clearSearch()>
+                <button class="btn btn-outline-secondary" type="submit" style="display: inline-block; border: none;" (click)="clearResults()">
                     <img src="/assets/x.svg" width="28px" height="28px">
                 </button>
             </div>
@@ -176,35 +176,42 @@
 
     <mat-tab-group mat-align-tabs="center">
         <mat-tab label="Summary"> 
-            <div>
-                <br>
-                <p> <b>High Price: </b>{{ companyResponseData.h}}</p>
-                <p> <b>Low Price: </b> {{ companyResponseData.l}}</p>
-                <p> <b>Open Price: </b> {{ companyResponseData.o}}</p>
-                <p> <b>Price Close: </b> {{ companyResponseData.pc}}</p>
-                <br>
-                <br>
-                <p><b><u>About the Company</u></b></p>
-                <br>
-                <p> <b>IPO Start Date: </b> {{ companyResponseData.ipo}}</p>
-                <p> <b>Industry: </b>  {{ companyResponseData.finnhubIndustry}}</p>
-                <p> <b>Webpage: </b> {{ companyResponseData.weburl}}</p>
-                
-                <p><b>Company Peers: </b></p>
-                <div class="row">
-                    <div class="col flex-row" *ngFor="let peer of companyPeerData" style="display: inline-block;">
-                        <a href="https://www.freecodecamp.org/" target="_blank">{{peer}}</a> 
-                   </div>
-                </div>
-            </div>
 
-            <div *ngIf="!hourlyChartLoading && hourlyChartOptions">
-                <highcharts-chart 
-                    [Highcharts] = "hourlyChart" 
-                    [options] = "hourlyChartOptions" 
-                    style = "width: 50%; height: 300px; display: inline-block;">
-                </highcharts-chart>
-            </div>
+            <ng-template matTabContent>
+
+                <div>
+                    <br>
+                    <p> <b>High Price: </b>{{ companyResponseData.h}}</p>
+                    <p> <b>Low Price: </b> {{ companyResponseData.l}}</p>
+                    <p> <b>Open Price: </b> {{ companyResponseData.o}}</p>
+                    <p> <b>Price Close: </b> {{ companyResponseData.pc}}</p>
+                    <br>
+                    <br>
+                    <p><b><u>About the Company</u></b></p>
+                    <br>
+                    <p> <b>IPO Start Date: </b> {{ companyResponseData.ipo}}</p>
+                    <p> <b>Industry: </b>  {{ companyResponseData.finnhubIndustry}}</p>
+                    <p> <b>Webpage: </b> {{ companyResponseData.weburl}}</p>
+                    
+                    <p><b>Company Peers: </b></p>
+                    <div class="row">
+                        <div class="col flex-row" *ngFor="let peer of companyPeerData" style="display: inline-block;">
+                            <a href="https://www.freecodecamp.org/" target="_blank">{{peer}}</a> 
+                       </div>
+                    </div>
+                </div>
+    
+                <div *ngIf="!hourlyChartLoading && hourlyChartOptions">
+                    <highcharts-chart 
+                        [Highcharts] = "hourlyChart" 
+                        [options] = "hourlyChartOptions" 
+                        style = "width: 50%; height: 300px; display: inline-block;">
+                    </highcharts-chart>
+                </div>
+
+
+            </ng-template>
+            
         </mat-tab>
 
         <mat-tab label="News"> 
@@ -225,33 +232,37 @@
         </mat-tab>
         <mat-tab label="Charts"> 
 
-            <div *ngIf="!chartLoading && chartOptions">
-                <highcharts-chart 
-                    [Highcharts] = "highcharts" 
-                    [options] = "chartOptions" 
-                    style = "width: 100%; height: 500px; display: inline-block;">
-                </highcharts-chart>
-            </div>
+            <ng-template matTabContent>
+                <div *ngIf="!chartLoading && chartOptions">
+                    <highcharts-chart 
+                        [Highcharts] = "highcharts" 
+                        [options] = "chartOptions" 
+                        style = "width: 100%; height: 500px; display: inline-block;">
+                    </highcharts-chart>
+                </div>
+            </ng-template>
 
 
         </mat-tab>
         <mat-tab label="Insights"> 
 
-            <div *ngIf="!recommendChartLoading && recommendChartOptions">
-                <highcharts-chart 
-                    [Highcharts] = "recommendChart" 
-                    [options] = "recommendChartOptions" 
-                    style = "width: 70%; height: 400px; display: inline-block;">
-                </highcharts-chart>
-            </div>
-
-            <div *ngIf="!surpriseChartLoading && surpriseChartOptions">
-                <highcharts-chart 
-                    [Highcharts] = "surpriseChart" 
-                    [options] = "surpriseChartOptions" 
-                    style = "width: 70%; height: 400px; display: inline-block;">
-                </highcharts-chart>
-            </div>
+            <ng-template matTabContent>
+                <div *ngIf="!recommendChartLoading && recommendChartOptions">
+                    <highcharts-chart 
+                        [Highcharts] = "recommendChart" 
+                        [options] = "recommendChartOptions" 
+                        style = "width: 70%; height: 400px; display: inline-block;">
+                    </highcharts-chart>
+                </div>
+    
+                <div *ngIf="!surpriseChartLoading && surpriseChartOptions">
+                    <highcharts-chart 
+                        [Highcharts] = "surpriseChart" 
+                        [options] = "surpriseChartOptions" 
+                        style = "width: 70%; height: 400px; display: inline-block;">
+                    </highcharts-chart>
+                </div>
+            </ng-template>
 
         </mat-tab>
     </mat-tab-group>
