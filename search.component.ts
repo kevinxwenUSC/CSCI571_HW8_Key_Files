@@ -7,6 +7,7 @@ import { FormControl } from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import { debounceTime, tap, switchMap, finalize, distinctUntilChanged, filter } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 import * as Highcharts from "highcharts/highstock";
 import IndicatorsCore from "highcharts/indicators/indicators";
@@ -100,17 +101,26 @@ export class SearchComponent implements OnInit {
   surpriseActual:any = []
   surpriseEstimate:any = []
 
+  //booleans for checking if graph data is ready
+  hourlyBool = false
+  ohlcBool = false
+  insightsBool = false
 
 
 
-  constructor(private http: HttpClient, public element: ElementRef) {
-   
+
+  constructor(private http: HttpClient, public element: ElementRef, private router: Router) {
+    //(<HTMLInputElement>document.getElementById('query')).value = String(localStorage["ticker"])
   }
 
 
   onSelected() {
     //option was chosen so send API call for the selected ticker automatically
     this.getData()
+
+    /*this.generateHourlyChart()
+    this.generateChart()
+    this.generateInsights()*/
   }
 
   displayWith(value: any) {
@@ -126,6 +136,16 @@ export class SearchComponent implements OnInit {
 
 
   ngOnInit(): void {
+
+    //set search bar input to what was saved in the search bar only component
+    console.log(localStorage["ticker"] + "  FIRST!");
+    (<HTMLInputElement>document.getElementById('query')).value = String(localStorage["ticker"])
+    
+
+    //get the data for the inputted ticker from the search bar only component
+    //this.getData()
+    this.onSelected()
+
     this.myControl.valueChanges
       .pipe(
         filter(res => {
@@ -169,6 +189,8 @@ export class SearchComponent implements OnInit {
   getData(){
     //call to node.js server for stock details
     this.companyTicker = (<HTMLInputElement>document.getElementById('query')).value;
+
+    localStorage["ticker"] = this.companyTicker
     console.log(this.companyTicker)
     const url ='/search/' + this.companyTicker
 
@@ -179,12 +201,17 @@ export class SearchComponent implements OnInit {
 
     })
 
+
     //separate call to node.js server for the news 
     const hourly_url = '/hourly/' + this.companyTicker
 
     this.http.get(hourly_url).subscribe((res)=>{
       this.stockHourly = res
       console.log(this.stockHourly)
+
+      this.hourlyBool = true
+
+      this.generateHourlyChart()
 
     })
 
@@ -220,9 +247,14 @@ export class SearchComponent implements OnInit {
 
     this.http.get(peer_url).subscribe((res)=>{
       this.companyPeerData= res
-      console.log(this.companyPeerData)
+      console.log(this.companyPeerData);
+
+      //setting the search bar input from the search only component here because this call returns fastest and it doesnt work outside
+      //of these functions like in ngInit() lmao
+      (<HTMLInputElement>document.getElementById('query')).value = String(localStorage["ticker"])
 
     })
+
 
     //separate call for company earnings data
     const earning_url = '/earning/' + this.companyTicker
@@ -240,49 +272,18 @@ export class SearchComponent implements OnInit {
       this.companyHistoryData= res
       console.log(this.companyHistoryData)
 
-      //separate the data to be passed to the chart
-      this.historyClosePrice = this.companyHistoryData.c
-      this.historyHighPrice = this.companyHistoryData.h
-      this.historyLowPrice = this.companyHistoryData.l
-      this.historyOpenPrice = this.companyHistoryData.o
-      this.historyTimeStamp = this.companyHistoryData.t
-      this.historyVolume = this.companyHistoryData.v
-
-      console.log(this.historyClosePrice)
-
-      //convert unix timestamps to normal dates
-      for(let i = 0; i < this.historyTimeStamp.length; i++){
-        //var normalDate = new Date(this.historyTimeStamp[i] * 1000)
-
-        //acount for x1000 offset for UNIX timestamps in Javascript/Typescript
-        var normalDate = this.historyTimeStamp[i] * 1000
-        this.historyNormalTime.push(normalDate)
-      }
-
-      console.log(this.historyTimeStamp)
-      console.log(this.historyNormalTime)
-
-      //clear ohlc and volume data each time so theres no overlap between charts
-      //this.volume = []
-      //this.ohlc = []
-
-      //fill the ohlc and volume data for highcharts to use
-      for(let i = 0; i < this.historyTimeStamp.length; i++){
-        this.ohlc.push([this.historyNormalTime[i], this.historyOpenPrice[i], this.historyHighPrice[i], this.historyLowPrice[i], this.historyClosePrice[i]]);
-        this.volume.push([this.historyNormalTime[i], this.historyVolume[i]])
-      }
-
-      console.log(this.volume)
-      console.log(this.ohlc)
-
-      this.generateHourlyChart()
+      //this.generateHourlyChart()
       this.generateChart()
       this.generateInsights()
 
+      //this.ohlcBool = true
     })
+
+
   }
 
   generateHourlyChart(){
+
 
     this.hourlyTimestamps = []
     this.hourlyPrices = []
@@ -343,9 +344,49 @@ export class SearchComponent implements OnInit {
   }
 
   generateChart(){
+
+    //separate the data to be passed to the chart
+    this.historyClosePrice = this.companyHistoryData.c
+    this.historyHighPrice = this.companyHistoryData.h
+    this.historyLowPrice = this.companyHistoryData.l
+    this.historyOpenPrice = this.companyHistoryData.o
+    this.historyTimeStamp = this.companyHistoryData.t
+    this.historyVolume = this.companyHistoryData.v
+
+    console.log(this.historyClosePrice)
+
+    this.historyNormalTime = []
+
+    //convert unix timestamps to normal dates
+    for(let i = 0; i < this.historyTimeStamp.length; i++){
+      //var normalDate = new Date(this.historyTimeStamp[i] * 1000)
+
+      //acount for x1000 offset for UNIX timestamps in Javascript/Typescript
+      var normalDate = this.historyTimeStamp[i] * 1000
+      this.historyNormalTime.push(normalDate)
+    }
+
+    console.log(this.historyTimeStamp)
+    console.log(this.historyNormalTime)
+
+    //clear ohlc and volume data each time so theres no overlap between charts
+    this.volume = []
+    this.ohlc = []
+
+    //fill the ohlc and volume data for highcharts to use
+    for(let i = 0; i < this.historyTimeStamp.length; i++){
+      this.ohlc.push([this.historyNormalTime[i], this.historyOpenPrice[i], this.historyHighPrice[i], this.historyLowPrice[i], this.historyClosePrice[i]]);
+      this.volume.push([this.historyNormalTime[i], this.historyVolume[i]])
+    }
+
+    console.log(this.volume)
+    console.log(this.ohlc)
+
+    
+    
     //generate chart once all data is ready
 
-    this.chartLoading = true
+    //this.chartLoading = true
     this.groupingUnits = [[
       'month',
       [1, 3, 6]
@@ -466,6 +507,11 @@ export class SearchComponent implements OnInit {
   generateInsights(){
     //clear the previous company's data
     this.recommendPeriod = []
+    this.strongBuy = []
+    this.buy = []
+    this.hold = []
+    this.sell = []
+    this.strongSell = []
 
     //fill out arrays needed for stacked bar chart
     for(let i = 0; i < 4; i++){
@@ -601,6 +647,11 @@ export class SearchComponent implements OnInit {
     this.surpriseChartLoading = false
 
 
+  }
+
+  clearResults(){
+    //route to search bar only component
+    this.router.navigateByUrl('/');
   }
 
 }
