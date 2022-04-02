@@ -131,7 +131,7 @@
           <li class="nav-item ps-5">
 
             <nav>
-              <a class="nav-link" href="#" routerLink = "/search" routerLinkActive= "active">Search</a>
+              <a class="nav-link" href="#" routerLink = "/" routerLinkActive= "active">Search</a>
             </nav>
 
           </li>
@@ -160,7 +160,10 @@
 
   </nav>
 
-  <br><br><br><br><br>
+  <br><br>
+  <div *ngIf="!hasRoute('/watchlist') && !hasRoute('/portfolio') && !hasRoute('/search')">
+    <app-homepage></app-homepage>
+  </div>
 
   
 
