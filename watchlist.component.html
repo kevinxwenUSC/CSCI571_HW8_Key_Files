@@ -1,0 +1,134 @@
+<style>
+    :host {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      font-size: 14px;
+      color: #333;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 8px 0;
+    }
+  
+    p {
+      margin: 0;
+    }
+
+    
+  
+  
+    div.searchDiv{
+      text-align: center;
+      margin: auto;
+    }
+  
+    input{ 
+      vertical-align: top;
+      margin: auto;
+      margin-left: -10px;
+      width: 50%; 
+      height: 100%;
+      padding-left: 50px;
+      border-radius: 15px 15px 15px 15px;
+      border-width: thin;
+    }
+  
+    .searchbox{
+      position: relative;
+      display: inline-block;
+    }
+
+    div.StockDetails{
+        display: inline-block;
+        margin-left: 50px;
+        margin-right: 50px;
+
+    }
+
+    .example-form {
+        min-width: 150px;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .example-full-width {
+        width: 100%;
+    }
+
+    
+
+
+   
+
+  
+  
+    /* Responsive Styles */
+    @media screen and (max-width: 767px) {
+      .card-container > *:not(.circle-link) ,
+      .terminal {
+        width: 100%;
+      }
+  
+      .card:not(.highlight-card) {
+        height: 16px;
+        margin: 8px 0;
+      }
+  
+      .card.highlight-card span {
+        margin-left: 72px;
+      }
+  
+      svg#rocket-smoke {
+        right: 120px;
+        transform: rotate(-5deg);
+      }
+    }
+  
+    @media screen and (max-width: 575px) {
+      svg#rocket-smoke {
+        display: none;
+        visibility: hidden;
+      }
+    }
+  </style>
+
+<div style="text-align: center; margin: auto;">
+    <br>
+    <h2>My Watchlist</h2>
+
+    <div class = "container">
+        <div class="row gx-5 gy-5">
+            <div *ngFor="let fav of currentFavorites" class="col-8 card">
+                
+
+                <div class="card-block" (click)="cardClicked(fav[1].ticker)">
+
+                    <div>
+                        <h5 class="card-title" style="text-align: left;">{{fav[1].ticker}}</h5> 
+
+                        <button class="btn btn-outline-secondary" type="submit" style="display: inline-block; border: none;" (click)="removeFavorite(fav[0])">
+                            <img src="/assets/x.svg" width="28px" height="28px">
+                        </button>
+                    </div>
+    
+            
+                    <h5 class="card-title" style="text-align: right;">{{fav[1].c}}</h5> 
+                    <p style="text-align: right;">{{fav[1].d}} {{fav[1].dp}}</p>
+
+                    <p id="{{fav[0]}}" style="text-align: left;">{{fav[0]}}</p>
+                    
+                </div>
+
+                <br>
+            </div>
+        </div>
+    </div>
+
+</div>
