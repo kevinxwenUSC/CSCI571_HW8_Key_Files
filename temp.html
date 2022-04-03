@@ -1,0 +1,369 @@
+<style>
+    :host {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      font-size: 14px;
+      color: #333;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 8px 0;
+    }
+  
+    p {
+      margin: 0;
+    }
+
+    td,
+    th {
+        border: 1px solid rgb(190, 190, 190);
+        padding: 10px;
+    }
+
+    td {
+        text-align: center;
+    }
+
+    tr{
+        background-color: white;
+    }
+
+    
+
+    th[scope="col"] {
+        background-color: #c7c9c9;
+    }
+
+    th[scope="row"] {
+        background-color: #c7c9c9;  
+    }
+
+
+    table {
+        border-collapse: collapse;
+        border: 2px solid rgb(200, 200, 200);
+        letter-spacing: 1px;
+        font-family: sans-serif;
+        font-size: .8rem;
+    }
+
+    
+  
+  
+    div.searchDiv{
+      text-align: center;
+      margin: auto;
+    }
+  
+    input{ 
+      vertical-align: top;
+      margin: auto;
+      margin-left: -10px;
+      width: 50%; 
+      height: 100%;
+      padding-left: 50px;
+      border-radius: 15px 15px 15px 15px;
+      border-width: thin;
+    }
+  
+    .searchbox{
+      position: relative;
+      display: inline-block;
+    }
+
+    div.StockDetails{
+        display: inline-block;
+        margin-left: 50px;
+        margin-right: 50px;
+
+    }
+
+    .example-form {
+        min-width: 150px;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .example-full-width {
+        width: 100%;
+    }
+
+    .card{
+        padding: 15px;
+    }
+
+   
+
+  
+  
+    /* Responsive Styles */
+    @media screen and (max-width: 767px) {
+      .card-container > *:not(.circle-link) ,
+      .terminal {
+        width: 100%;
+      }
+  
+      .card:not(.highlight-card) {
+        height: 16px;
+        margin: 8px 0;
+      }
+  
+      .card.highlight-card span {
+        margin-left: 72px;
+      }
+  
+      svg#rocket-smoke {
+        right: 120px;
+        transform: rotate(-5deg);
+      }
+    }
+  
+    @media screen and (max-width: 575px) {
+      svg#rocket-smoke {
+        display: none;
+        visibility: hidden;
+      }
+    }
+  </style>
+
+<div style="text-align: center; margin: auto;">
+
+
+    <h1>Stock Search</h1>
+    
+    <br>
+
+    <div class = "container">
+
+   
+
+        <div class ="row">
+
+            <div class="searchbox">
+                <mat-autocomplete  #auto="matAutocomplete" (optionSelected)="onSelected()">
+                    <mat-option *ngIf="isLoading" class="is-loading">
+                        <div class="spinner-border text-secondary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+
+                    </mat-option>
+                    <ng-container *ngIf="!isLoading">
+                        <mat-option *ngFor="let stock of filteredStocks" [value]="stock.symbol">
+                            <span>{{stock.symbol}}</span>
+                          </mat-option>
+                    </ng-container>
+                </mat-autocomplete>
+
+                <input type = "text" matInput [formControl]="myControl" [matAutocomplete]="auto" id = "query" name = "q" placeholder="Enter Stock Ticker Symbol" style="display: inline-block;">
+        
+                <button id = "search_button" class="btn btn-outline-secondary" type="submit" style="display: inline-block; border: none; margin-left: -100px;" (click)="getData()">
+                    <img src="/assets/search.svg" width="auto" height="auto">
+                </button>
+        
+                <button class="btn btn-outline-secondary" type="submit" style="display: inline-block; border: none;" (click)="clearResults()">
+                    <img src="/assets/x.svg" width="28px" height="28px">
+                </button>
+            </div>
+
+        </div>
+    
+    </div>
+
+    <br>
+
+    <div *ngIf="loadingSpeen" class="d-flex justify-content-center">
+        <div class="spinner-border" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    
+    <div class="StockDetails">
+        <br>
+        <br>
+        <h2>
+            {{ companyResponseData.ticker}} 
+            <button class="btn btn-outline-secondary" type="submit" style="display: inline-block; border: none;" (click)="addFavorite()">
+                <img [src]="currentStarIMG" width="28px" height="28px">
+            </button>
+        </h2>
+        <h3>
+            {{ companyResponseData.name}}
+        </h3>
+        <p>
+            {{ companyResponseData.exchange}}
+        </p>
+   
+
+    </div>
+    
+    
+    <div class="StockDetails">
+        <img height="100" width="100" [src]="companyResponseData.logo">
+        <br>
+        <br>
+    </div>
+
+    <div class="StockDetails">
+        <br>
+        <br>
+        <h2 [ngStyle] = "{'color': stockGood? 'green' : 'red'}">
+            {{ companyResponseData.c}}
+        </h2>
+        <h3 [ngStyle] = "{'color': stockGood? 'green' : 'red'}">
+            {{ companyResponseData.d}} {{ percentParen }} 
+        </h3>
+        <p>
+            {{ companyResponseTime }}
+        </p>
+    </div>
+
+    <br><br><br><br>
+
+    <mat-tab-group mat-align-tabs="center">
+        <mat-tab label="Summary"> 
+
+            <ng-template matTabContent style="text-align: center;">
+
+                <div>
+                    <br>
+                    <p> <b>High Price: </b>{{ companyResponseData.h}}</p>
+                    <p> <b>Low Price: </b> {{ companyResponseData.l}}</p>
+                    <p> <b>Open Price: </b> {{ companyResponseData.o}}</p>
+                    <p> <b>Price Close: </b> {{ companyResponseData.pc}}</p>
+                    <br>
+                    <br>
+                    <p><b><u>About the Company</u></b></p>
+                    <br>
+                    <p> <b>IPO Start Date: </b> {{ companyResponseData.ipo}}</p>
+                    <p> <b>Industry: </b>  {{ companyResponseData.finnhubIndustry}}</p>
+                    <p> <b>Webpage: </b> {{ companyResponseData.weburl}}</p>
+                    
+                    <p><b>Company Peers: </b> </p>
+                    <p>
+                        <u style="color:blue;" (click)="peerClicked(companyPeerData[0])">{{companyPeerData[0]}} </u> &nbsp; 
+                        <u style="color:blue;" (click)="peerClicked(companyPeerData[1])">{{companyPeerData[1]}} </u> &nbsp; 
+                        <u style="color:blue;" (click)="peerClicked(companyPeerData[2])">{{companyPeerData[2]}} </u> &nbsp; 
+                        <u style="color:blue;" (click)="peerClicked(companyPeerData[3])">{{companyPeerData[3]}} </u> &nbsp; 
+                        <u style="color:blue;" (click)="peerClicked(companyPeerData[4])">{{companyPeerData[4]}} </u> &nbsp; 
+                        <u style="color:blue;" (click)="peerClicked(companyPeerData[5])">{{companyPeerData[5]}} </u> &nbsp; 
+                    </p>
+                    
+
+
+                    
+
+                    
+
+                    
+                </div>
+    
+                <div *ngIf="!hourlyChartLoading && hourlyChartOptions">
+                    <highcharts-chart 
+                        [Highcharts] = "hourlyChart" 
+                        [options] = "hourlyChartOptions" 
+                        style = "width: 50%; height: 300px; display: inline-block;">
+                    </highcharts-chart>
+                </div>
+
+
+            </ng-template>
+
+            <br><br><br>
+            
+        </mat-tab>
+
+        <mat-tab label="News"> 
+            <br>
+            <div class = "container">
+                <div class="row gx-5 gy-5">
+                    <div *ngFor="let card of stockNews" class="col-md-6 card flex-row">
+                        <img class="card-img-left" [src]="card.image" alt="No Article Image Available" height="100" width="150" style="display: inline-block;">
+    
+                        <div class="card-block" style="display:inline-block;">
+                            <h5 class="card-title" style="text-align: left;">{{card.headline}}</h5>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+
+            <br><br><br>
+
+        </mat-tab>
+        <mat-tab label="Charts"> 
+
+            <ng-template matTabContent>
+                <div *ngIf="!chartLoading && chartOptions">
+                    <highcharts-chart 
+                        [Highcharts] = "highcharts" 
+                        [options] = "chartOptions" 
+                        style = "width: 100%; height: 500px; display: inline-block;">
+                    </highcharts-chart>
+                </div>
+                <br><br><br>
+            </ng-template>
+
+        </mat-tab>
+        <mat-tab label="Insights"> 
+
+            <ng-template matTabContent>
+                <div style="text-align: center; margin:0 auto;">
+                    <h3>Social Sentiment</h3>
+                    <table style="text-align: center; margin:0 auto;">
+                        <tr>
+                            <th scope="col">{{ companyResponseData.name}}</th>
+                            <th scope="col">Reddit</th>
+                            <th scope="col">Twitter</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total Mentions</th>
+                            <td>{{redditTotal}}</td>
+                            <td>{{twitterTotal}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Positive Mentions</th>
+                            <td>{{sentimentReddit.positiveMention}}</td>
+                            <td>{{sentimentTwitter.positiveMention}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Negative Mentions</th>
+                            <td>{{sentimentReddit.negativeMention}}</td>
+                            <td>{{sentimentTwitter.negativeMention}}</td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <div *ngIf="!recommendChartLoading && recommendChartOptions">
+                    <highcharts-chart 
+                        [Highcharts] = "recommendChart" 
+                        [options] = "recommendChartOptions" 
+                        style = "width: 60%; height: 300px; display: inline-block;">
+                    </highcharts-chart>
+                </div>
+    
+                <div *ngIf="!surpriseChartLoading && surpriseChartOptions">
+                    <highcharts-chart 
+                        [Highcharts] = "surpriseChart" 
+                        [options] = "surpriseChartOptions" 
+                        style = "width: 60%; height: 300px; display: inline-block;">
+                    </highcharts-chart>
+                </div>
+                <br><br><br>
+            </ng-template>
+
+            
+        </mat-tab>
+    </mat-tab-group>
+
+
+        
+
+</div>
